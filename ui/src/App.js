@@ -4,6 +4,19 @@ import Sidebar from "./Components/SideBar";
 import JobsPage from "./Components/JobsTable";
 import JobsTable from "./Components/JobsTable";
 import { Box } from "@mui/material";
+import MYSQLTap from "./Components/Tap/MYSQLTap";
+import SnowflakeTarget from "./Components/Target/SnowflakeTarget";
+import SourceSyncWidget from "./Components/SourcesToSync/SourcesToSync";
+
+const fakeTables = Array.from({ length: 40 }).map((_, i) => ({
+  name: `table_${i + 1}`,
+  fields: [
+    { name: "id", type: "INTEGER" },
+    { name: "created_at", type: "TIMESTAMP" },
+    { name: "updated_at", type: "TIMESTAMP" },
+    { name: "name", type: "VARCHAR" },
+  ],
+}));
 
 function App() {
   return (
@@ -16,31 +29,17 @@ function App() {
             padding: "20px",
           }}
         >
-          <JobsTable
-            jobs={[
-              {
-                name: "Daily Sync",
-                tap: "MySQL",
-                target: "Snowflake",
-                status: "pass",
-                cron: "0 2 * * *",
-              },
-              {
-                name: "Weekly Sync",
-                tap: "Postgres",
-                target: "Redshift",
-                status: "fail",
-                cron: "0 5 * * 1",
-              },
-              {
-                name: "Adhoc Run",
-                tap: "MongoDB",
-                target: "BigQuery",
-                status: "running",
-                cron: "*/10 * * * *",
-              },
-            ]}
-          ></JobsTable>
+          <SourceSyncWidget
+            loadTableInfo={() => fakeTables}
+            onSave={(config) => {
+              console.log("✅ Saved config:", config);
+              alert("Saved configuration! Check console.");
+            }}
+            onRefresh={() => {
+              console.log("🔄 Refresh triggered");
+              alert("Tables refreshed!");
+            }}
+          />
         </div>
       </div>
     </div>
